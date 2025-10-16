@@ -1,0 +1,18 @@
+[package]
+name = "espforge-rs"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name="setup"
+path = "main.rs"
+
+[build-dependencies]
+proc-macro2 = "1.0.101"
+quote = "1.0.41"
+serde = { version = "1.0.228", features = ["derive"] }
+toml = "0.9.8"
+
+
+[dependencies]
+
