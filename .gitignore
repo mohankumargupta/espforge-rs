@@ -1,1 +1,9 @@
-/target
+*
+!.gitignore
+!main.toml
+!main.rs
+!Cargo.lock
+!Cargo.toml
+!templates/
+!samples/
+
