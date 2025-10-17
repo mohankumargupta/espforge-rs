@@ -1,9 +1,9 @@
 //use proc_macro2::TokenStream;
 //use quote::quote;
 use serde::{self, Deserialize, Serialize};
-use std::{fs, process::Command};
+use std::{fs, path::Path, process::Command};
 use toml;
-
+use askama::Template;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct EspConfig {
@@ -16,6 +16,9 @@ struct EspForgeConfig {
     espforge: EspConfig,
 }
 
+#[derive(Template)]
+#[template(path = "main.rs.askama", escape = "none")]
+struct MainTemplate;
 
 // build.rs
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -31,11 +34,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config: EspForgeConfig = toml::from_str(&toml_content)?;
     let esp_config: EspConfig = config.espforge;
     //println!("cargo:warning={:?}", config);
-    generate(esp_config.name, esp_config.chip);
+    generate(&esp_config.name, &esp_config.chip);
+    let template = MainTemplate{};
+    let rendered = template.render()?;
+    let path = format!("{}/src/bin/main.rs", &esp_config.name);
+    fs::create_dir_all(Path::new(&format!("{}/src/bin", &esp_config.name)))?;
+    fs::write(&path, rendered)?;
     Ok(())
 }
 //-o  -o  -o  -o vscode boo
-fn generate(name: String, chip: String)  {
+fn generate(name: &String, chip: &String)  {
    Command::new("esp-generate")
         .arg("--headless")
         .arg("--chip")
