@@ -1,0 +1,3 @@
+[espforge]
+name = "hello-world"
+chip = "esp32c3"
