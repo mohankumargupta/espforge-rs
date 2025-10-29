@@ -23,7 +23,6 @@ pub fn main() {
     match cli.command {
         Commands::Compile { file } => {
             if file.is_file() {
-                //parse_config(&file);
                 compile_command::compile(&file);
             }
             else {

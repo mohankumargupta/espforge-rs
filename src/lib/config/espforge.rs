@@ -2,8 +2,8 @@ use serde::{self, Deserialize};
 
 #[derive(Deserialize, Debug)]
 pub struct EspConfig {
-    name: String,
-    chip: String,
+    pub name: String,
+    pub chip: String,
 }
 
 #[derive(Deserialize, Debug)]
