@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
-use espforge_lib::config::parse::parse_config;
+use espforge_lib::compile_command;
 
 #[derive(Parser)]
 #[command(about = "Example tool with a compile subcommand")]
@@ -23,7 +23,8 @@ pub fn main() {
     match cli.command {
         Commands::Compile { file } => {
             if file.is_file() {
-                parse_config(&file);
+                //parse_config(&file);
+                compile_command::compile(&file);
             }
             else {
                 eprintln!("file {:?} does not exist", &file);
