@@ -162,12 +162,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
-name = "espforge-rs"
+name = "espforge"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "espforge_lib",
+]
+
+[[package]]
+name = "espforge_lib"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "askama",
- "clap",
  "proc-macro2",
  "quote",
  "serde",

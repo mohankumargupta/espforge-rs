@@ -1,0 +1,9 @@
+[package]
+name = "espforge"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+espforge_lib = { path = "../espforge" }
+clap = { version = "4.5.50", features = ["derive"] }
+
