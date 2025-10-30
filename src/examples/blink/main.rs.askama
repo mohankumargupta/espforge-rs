@@ -1,0 +1,42 @@
+#![no_std]
+#![no_main]
+
+use core::cell::RefCell;
+
+use critical_section::Mutex;
+use esp_backtrace as _;
+use esp_hal::{
+    delay::Delay,
+    gpio::{Level, Output, OutputConfig},
+    handler,
+    main,
+    ram,
+};
+
+esp_bootloader_esp_idf::esp_app_desc!();
+
+#[esp_rtos::main]
+fn main() -> ! {
+    esp_println::logger::init_logger_from_env();
+    let peripherals = esp_hal::init(esp_hal::Config::default());
+
+    #[cfg(target_arch = "riscv32")]
+    let sw_int = SoftwareInterruptControl::new(peripherals.SW_INTERRUPT);
+    let timg0 = TimerGroup::new(peripherals.TIMG0);
+    esp_rtos::start(
+        timg0.timer0,
+        #[cfg(target_arch = "riscv32")]
+        sw_int.software_interrupt0,
+    );
+
+    let mut led = Output::new(peripherals.GPIO2, Level::Low, OutputConfig::default());
+    led.set_high();
+    let delay = Delay::new();
+
+    loop {
+        led.toggle();
+        delay.delay_millis(500);
+    }
+}
+
+
