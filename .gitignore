@@ -1,1 +1,9 @@
-target/
+*
+!.vscode/
+!examples/
+!.gitignore
+!Cargo.lock
+!Cargo.toml
+!justfile
+!main.toml
+
