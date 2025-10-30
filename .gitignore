@@ -1,9 +1,12 @@
 *
+!.gitignore
 !.vscode/
 !examples/
-!.gitignore
+!src/
+!src/**/*
+!src/**/*.rs
 !Cargo.lock
 !Cargo.toml
 !justfile
 !main.toml
-!src/
+
