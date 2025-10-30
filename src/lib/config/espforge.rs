@@ -1,4 +1,7 @@
+use std::collections::HashMap;
+
 use serde::{self, Deserialize};
+use toml::Value;
 
 #[derive(Deserialize, Debug)]
 pub struct EspConfig {
@@ -9,4 +12,7 @@ pub struct EspConfig {
 #[derive(Deserialize, Debug)]
 pub struct EspForgeConfig {
     pub espforge: EspConfig,
+    #[serde(default)]
+    pub example: HashMap<String, Value>,
 }
+
