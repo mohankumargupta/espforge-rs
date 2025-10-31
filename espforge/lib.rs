@@ -3,6 +3,8 @@ pub mod config;
 pub mod core;
 pub mod examples;
 
+use espforge_macros::generate_example_enum;
+
 include!(concat!(env!("OUT_DIR"), "/examples_generated.rs"));
 
 pub trait Example {

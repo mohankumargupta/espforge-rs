@@ -2,10 +2,10 @@ use serde::Deserialize;
 use crate::Example;
 use askama::Template;
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 struct Config {}
 
-#[derive(Template, Deserialize)]
+#[derive(Clone, Debug, Template, Deserialize)]
 #[template(path = "examples/bare/main.rs.askama")]
 pub struct BareConfig {
     #[serde(flatten)]
@@ -14,7 +14,6 @@ pub struct BareConfig {
 
 impl Example for BareConfig {
     fn render(&self) -> Result<String, askama::Error> {
-        let template = BareConfig {};
-        template.render();
+        Template::render(self)
     }
 }

@@ -2,12 +2,12 @@ use serde::Deserialize;
 use crate::Example;
 use askama::Template;
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 struct Config {
     pub blink_rate_ms: u64,
 }
 
-#[derive(Template, Deserialize)]
+#[derive(Clone, Debug, Template, Deserialize)]
 #[template(path = "examples/blink/main.rs.askama")]
 pub struct BlinkConfig {
     #[serde(flatten)]
@@ -16,10 +16,7 @@ pub struct BlinkConfig {
 
 impl Example for BlinkConfig {
     fn render(&self) -> Result<String, askama::Error> {
-        let template = BlinkConfig {
-            blink_rate_ms: self.config.blink_rate_ms,
-        };
-        template.render()
+        Template::render(self)
     }
 }
 

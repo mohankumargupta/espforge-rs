@@ -175,6 +175,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "askama",
+ "espforge_macros",
  "proc-macro2",
  "quote",
  "serde",

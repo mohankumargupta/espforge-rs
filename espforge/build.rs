@@ -32,7 +32,7 @@ pub fn main() {
     for name in &entries {
         let alias = format!("{}Config", to_pascal_case(name));
         output.push_str(&format!(
-            "use crate::examples::{name}::config::Config as {alias};\n"
+            "use crate::examples::{name}::config::{alias};\n"
         ));
     }
 

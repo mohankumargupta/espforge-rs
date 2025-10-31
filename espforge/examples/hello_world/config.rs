@@ -2,10 +2,10 @@ use serde::Deserialize;
 use crate::Example;
 use askama::Template;
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 struct Config;
 
-#[derive(Template, Deserialize)]
+#[derive(Clone, Debug, Template, Deserialize)]
 #[template(path = "examples/hello_world/main.rs.askama")]
 pub struct HelloWorldConfig {
     #[serde(flatten)]
@@ -14,7 +14,6 @@ pub struct HelloWorldConfig {
 
 impl Example for HelloWorldConfig {
     fn render(&self) -> Result<String, askama::Error> {
-        let template = BlinkConfig{};
-        template.render();
+        Template::render(self)
     }
 }
