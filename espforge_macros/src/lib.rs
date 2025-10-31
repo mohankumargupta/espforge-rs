@@ -38,6 +38,9 @@ pub fn generate_example_enum(input: TokenStream) -> TokenStream {
     let ExampleConfig { name, entries } = parse_macro_input!(input as ExampleConfig);
 
     // Generate PascalCase variant names
+    let variant_names = entries.iter().map(|(key, _ty)| {
+         to_pascal_case_ident(key)
+     });    
     let variants = entries.iter().map(|(key, ty)| {
         let variant_name = to_pascal_case_ident(key);
         quote! { #variant_name(#ty) }
@@ -60,22 +63,51 @@ pub fn generate_example_enum(input: TokenStream) -> TokenStream {
         }
     });
 
-    let expanded = quote! {
-        #[derive(Debug, Clone)]
-        pub enum #name {
-            #( #variants, )*
-        }
+    // let expanded = quote! {
+    //     #[derive(Debug, Clone)]
+    //     pub enum #name {
+    //         #( #variants, )*
+    //     }
 
-        impl #name {
-            pub fn handle_example(name: &str, value: &toml::Value) -> Option<Self> {
-                use serde::Deserialize;
-                match name {
-                    #( #match_arms, )*
-                    _ => None,
-                }
-            }
-        }
-    };
+    //     impl #name {
+    //         pub fn handle_example(name: &str, value: &toml::Value) -> Option<Self> {
+    //             use serde::Deserialize;
+    //             match name {
+    //                 #( #match_arms, )*
+    //                 _ => None,
+    //             }
+    //         }
+    //     }
+
+
+    // };
+
+     let expanded = quote! {
+         #[derive(Debug, Clone)]
+         pub enum #name {
+             #( #variants, )*
+         }
+ 
+         impl #name {
+             pub fn handle_example(name: &str, value: &toml::Value) -> Option<Self> {
+                 use serde::Deserialize;
+                 match name {
+                     #( #match_arms, )*
+                     _ => None,
+                 }
+             }
+         }
+ 
+         impl crate::Example for #name {
+             fn render(&self) -> Result<String, askama::Error> {
+                 match self {
+                     #(
+                         Self::#variant_names(config) => config.render(),
+                     )*
+                 }
+             }
+         }
+        };
 
     expanded.into()
 }

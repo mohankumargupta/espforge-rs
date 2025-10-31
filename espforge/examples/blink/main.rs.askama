@@ -35,7 +35,7 @@ fn main() -> ! {
 
     loop {
         led.toggle();
-        delay.delay_millis(500);
+        delay.delay_millis({{ blink_rate_ms }});
     }
 }
 
