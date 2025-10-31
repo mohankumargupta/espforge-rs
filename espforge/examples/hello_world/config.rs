@@ -9,7 +9,7 @@ struct Config;
 #[template(path = "examples/hello_world/main.rs.askama")]
 pub struct HelloWorldConfig {
     #[serde(flatten)]
-    pub config: Config,
+    config: Config,
 }
 
 impl Example for HelloWorldConfig {

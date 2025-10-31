@@ -49,7 +49,7 @@ pub fn generate_example_enum(input: TokenStream) -> TokenStream {
         let key_str = key;
         quote! {
             #key_str => {
-                match #ty::deserialize(value) {
+                match #ty::deserialize(value.clone()) {
                     Ok(c) => Some(Self::#variant_name(c)),
                     Err(e) => {
                         eprintln!("Error parsing [example.{}]: {}", #key_str, e);
@@ -68,6 +68,7 @@ pub fn generate_example_enum(input: TokenStream) -> TokenStream {
 
         impl #name {
             pub fn handle_example(name: &str, value: &toml::Value) -> Option<Self> {
+                use serde::Deserialize;
                 match name {
                     #( #match_arms, )*
                     _ => None,

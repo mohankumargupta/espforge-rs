@@ -9,7 +9,7 @@ struct Config {}
 #[template(path = "examples/bare/main.rs.askama")]
 pub struct BareConfig {
     #[serde(flatten)]
-    pub config: Config,
+    config: Config,
 }
 
 impl Example for BareConfig {

@@ -11,7 +11,7 @@ struct Config {
 #[template(path = "examples/blink/main.rs.askama")]
 pub struct BlinkConfig {
     #[serde(flatten)]
-    pub config: Config,
+    config: Config,
 }
 
 impl Example for BlinkConfig {
