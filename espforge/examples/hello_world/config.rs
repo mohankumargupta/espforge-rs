@@ -6,7 +6,7 @@ use askama::Template;
 struct Config;
 
 #[derive(Template, Deserialize)]
-#[template(path = "examples/blink/main.rs.askama")]
+#[template(path = "examples/hello_world/main.rs.askama")]
 pub struct HelloWorldConfig {
     #[serde(flatten)]
     pub config: Config,
