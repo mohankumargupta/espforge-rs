@@ -3,4 +3,4 @@ name = "hello-world"
 chip = "esp32c3"
 
 [example.blink]
-blink_rate_ms = 500
+blink_rate_ms = 2500
