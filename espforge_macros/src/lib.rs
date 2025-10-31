@@ -34,7 +34,7 @@ impl Parse for ExampleConfig {
 }
 
 #[proc_macro]
-pub fn generate_example_enum(input: TokenStream) -> TokenStream {
+pub fn generate_example(input: TokenStream) -> TokenStream {
     let ExampleConfig { name, entries } = parse_macro_input!(input as ExampleConfig);
 
     // Generate PascalCase variant names
@@ -67,7 +67,7 @@ pub fn generate_example_enum(input: TokenStream) -> TokenStream {
         }
 
         impl #name {
-            pub fn try_from_example(name: &str, value: &toml::Value) -> Option<Self> {
+            pub fn handle_example(name: &str, value: &toml::Value) -> Option<Self> {
                 match name {
                     #( #match_arms, )*
                     _ => None,
