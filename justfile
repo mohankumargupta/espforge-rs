@@ -4,8 +4,21 @@ set windows-shell := ["powershell", "-c"]
 _main:
     @just --list
 
-generate:
+prerequisites:
+    cargo install cargo-binstall
+    cargo binstall espup
+    cargo binstall esp-generate
+
+update:
+    espup update
+    cargo binstall esp-generate
+
+build:
+    cargo build
+
+check:
     cargo check
 
-
+run:
+    cargo run -- compile examples/blink.toml
 
