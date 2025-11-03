@@ -23,39 +23,40 @@ fn test_invalid_config_file() {
         .failure();    
 }
 
-/// Happy path, blink example
-#[test]
-fn test_blink() -> Result<(), Error> {
-    test_happy_path!(blink, "../examples/blink.toml", 
-                    content.contains("delay.delay_millis(2500);"),
-                    "blink_rate_ms not inserted."            
-    );
-    // //Arrange
-    // let temp = assert_fs::TempDir::new()?;
-    // let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    // let configuration_path = manifest_dir.join( "../examples/blink.toml");
-    // let temp_config = temp.child("blink.toml");
-    // fs::copy(configuration_path, temp_config.path())?;
+test_happy_path!(blink, "blink", "../examples/blink.toml", 
+                "delay.delay_millis(2500);",
+                "blink_rate_ms not inserted.");
 
-    // //Act
-    // let mut cmd = Command::new(pkg_name!());
-    // cmd.current_dir(temp.path());
-    // cmd.arg("compile").arg(temp_config.path());
-    // cmd.assert().success();
+// /// Happy path, blink example
+// #[test]
+// fn test_blink() -> Result<(), Error> {
 
-    // //Assert
-    // temp.child("blink")
-    //     .assert(predicate::path::exists())
-    //     .assert(predicate::path::is_dir());
-    // temp.child("blink/src/main.rs")
-    //     .assert(predicate::path::exists())
-    //     .assert(predicate::path::is_file());
+//     // //Arrange
+//     // let temp = assert_fs::TempDir::new()?;
+//     // let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+//     // let configuration_path = manifest_dir.join( "../examples/blink.toml");
+//     // let temp_config = temp.child("blink.toml");
+//     // fs::copy(configuration_path, temp_config.path())?;
 
-    // let content = fs::read_to_string(temp.child("blink/src/main.rs").path())?;
-    // assert!(
-    //     content.contains("delay.delay_millis(2500);"),
-    //     "blink_rate_ms not inserted."
-    // );
+//     // //Act
+//     // let mut cmd = Command::new(pkg_name!());
+//     // cmd.current_dir(temp.path());
+//     // cmd.arg("compile").arg(temp_config.path());
+//     // cmd.assert().success();
 
-    Ok(())
-}
+//     // //Assert
+//     // temp.child("blink")
+//     //     .assert(predicate::path::exists())
+//     //     .assert(predicate::path::is_dir());
+//     // temp.child("blink/src/main.rs")
+//     //     .assert(predicate::path::exists())
+//     //     .assert(predicate::path::is_file());
+
+//     // let content = fs::read_to_string(temp.child("blink/src/main.rs").path())?;
+//     // assert!(
+//     //     content.contains("delay.delay_millis(2500);"),
+//     //     "blink_rate_ms not inserted."
+//     // );
+
+//     Ok(())
+// }
