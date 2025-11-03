@@ -20,5 +20,7 @@ fn test_invalid_config_file() {
 
 #[cli_test("../examples/blink.toml")]
 fn test_blink_compilation(output: Output) {
-    output.assert_file("blink/src/main.rs");
+    output
+        .assert_file("blink/src/main.rs")
+        .assert(predicate::str::contains("delay.delay_millis(2500);"));
 }
