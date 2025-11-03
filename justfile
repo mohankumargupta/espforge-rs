@@ -16,6 +16,10 @@ update:
 build:
     cargo build
 
+test:
+    cargo build
+    cargo test
+
 check:
     cargo check
 
