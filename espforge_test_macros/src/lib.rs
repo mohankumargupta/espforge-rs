@@ -66,8 +66,12 @@ fn expand_cli_test(config_path: &LitStr, input_fn: &ItemFn) -> syn::Result<proc_
             /// Returns a `ChildPath` for a file within the temporary directory.
             /// This type from `assert_fs` can be used directly for assertions.
             fn assert_file<P: AsRef<::std::path::Path>>(&self, path: P) -> assert_fs::fixture::ChildPath {
-                use assert_fs::fixture::PathChild;
-                self.temp.child(path)
+                use assert_fs::{fixture::PathChild, assert::PathAssert};
+                use predicates::prelude::*;
+
+                let child = self.temp.child(path);
+                child.assert(predicate::path::exists());
+                child
             }
 
             /// Get the path to the temporary directory
