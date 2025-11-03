@@ -26,3 +26,6 @@ check:
 run:
     cargo run -- compile examples/blink.toml
 
+bare:
+    cargo run -- compile examples/bare.toml
+
