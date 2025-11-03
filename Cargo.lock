@@ -303,6 +303,7 @@ dependencies = [
  "assert_fs",
  "clap",
  "espforge_lib",
+ "espforge_test_macros",
  "insta",
  "predicates",
 ]
@@ -323,6 +324,15 @@ dependencies = [
 
 [[package]]
 name = "espforge_macros"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "espforge_test_macros"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",
