@@ -29,3 +29,6 @@ run:
 bare:
     cargo run -- compile examples/bare.toml
 
+expand_test:
+    cd cli && cargo expand --test integration_tests
+

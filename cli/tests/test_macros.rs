@@ -25,7 +25,7 @@ macro_rules! test_happy_path {
             let temp = assert_fs::TempDir::new()?;
             let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
             let configuration_path = manifest_dir.join($config_path);
-            let temp_config = temp.child("test.toml");
+            let temp_config = temp.child(format!("{}.toml", $name));
             fs::copy(configuration_path, temp_config.path())?;
 
             //Act
@@ -36,7 +36,7 @@ macro_rules! test_happy_path {
             //Assert
             //Assert files are generated
             // temp.child($name)
-            //     .assert(predicate::path::exists())
+            //     .assert(predicate::path::exists());
             //     .assert(predicate::path::is_dir());
             // temp.child(format!("{}/src/main.rs", $name))
             //     .assert(predicate::path::exists())
