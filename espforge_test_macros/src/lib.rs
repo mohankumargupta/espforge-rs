@@ -69,8 +69,13 @@ fn expand_cli_test(config_path: &LitStr, input_fn: &ItemFn) -> syn::Result<proc_
                 use assert_fs::{fixture::PathChild, assert::PathAssert};
                 use predicates::prelude::*;
 
-                let child = self.temp.child(path);
-                child.assert(predicate::path::exists());
+                // let child = self.temp.child(path);
+                // child.assert(predicate::path::exists());
+                let child = self.temp.child(&path);
+                let path_str = path.as_ref().display().to_string();
+                if !predicate::path::exists().eval(child.path()) {
+                    panic!("Expected path to exist, but was missing: {}", child.path().display());
+                }          
                 child
             }
 
