@@ -1,14 +1,19 @@
+// /espforge_test_macros/src/lib.rs
+
 use proc_macro::TokenStream;
 use quote::{quote};
 use syn::{parse_macro_input, Error, FnArg, ItemFn, LitStr, Pat, Type};
 
 /// Attribute macro for CLI integration tests
-/// 
+///
 /// # Example
 /// ```ignore
 /// #[cli_test("examples/blink.toml")]
 /// fn test_blink_compilation(output: Output) {
-///     output.assert_file("output.txt").contains("expected content");
+///     use predicates::prelude::*;
+///     output
+///         .assert_file("output.txt")
+///         .assert(predicate::str::contains("expected content"));
 /// }
 /// ```
 #[proc_macro_attribute]
@@ -29,11 +34,52 @@ fn expand_cli_test(config_path: &LitStr, input_fn: &ItemFn) -> syn::Result<proc_
     let body = &input_fn.block;
     let config_path_str = config_path.value();
 
+    // Generate a unique struct name to avoid conflicts
+    // Convert snake_case function name to UpperCamelCase
+    let fn_name_str = fn_name.to_string();
+    let camel_case_name = fn_name_str
+        .split('_')
+        .map(|word| {
+            let mut chars = word.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+            }
+        })
+        .collect::<String>();
+    
+    let output_struct_name = syn::Ident::new(
+        &format!("Output{}", camel_case_name),
+        fn_name.span()
+    );
+
+    // The entire test logic is generated here.
+    // All necessary `use` statements are included inside the `quote!` block
+    // to solve macro hygiene issues.
     Ok(quote! {
+        /// Helper struct providing assertion utilities for CLI test output
+        struct #output_struct_name<'a> {
+            temp: &'a assert_fs::TempDir,
+        }
+
+        impl<'a> #output_struct_name<'a> {
+            /// Returns a `ChildPath` for a file within the temporary directory.
+            /// This type from `assert_fs` can be used directly for assertions.
+            fn assert_file<P: AsRef<::std::path::Path>>(&self, path: P) -> assert_fs::fixture::ChildPath {
+                use assert_fs::fixture::PathChild;
+                self.temp.child(path)
+            }
+
+            /// Get the path to the temporary directory
+            fn path(&self) -> &std::path::Path {
+                self.temp.path()
+            }
+        }
+
         #[test]
         fn #fn_name() -> Result<(), anyhow::Error> {
             use assert_cmd::{Command, prelude::*, pkg_name};
-            use assert_fs::{assert::PathAssert, fixture::PathChild};
+            use assert_fs::{assert::PathAssert, fixture::{PathChild, ChildPath}};
             use predicates::prelude::*;
             use std::{fs, path::PathBuf};
 
@@ -42,7 +88,6 @@ fn expand_cli_test(config_path: &LitStr, input_fn: &ItemFn) -> syn::Result<proc_
             let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
             let configuration_path = manifest_dir.join(#config_path_str);
             
-            // Validate config file exists
             if !configuration_path.exists() {
                 anyhow::bail!(
                     "Configuration file not found: {}",
@@ -51,13 +96,7 @@ fn expand_cli_test(config_path: &LitStr, input_fn: &ItemFn) -> syn::Result<proc_
             }
 
             let temp_config = temp.child("config.toml");
-            fs::copy(&configuration_path, temp_config.path())
-                .map_err(|e| anyhow::anyhow!(
-                    "Failed to copy config from {} to {}: {}",
-                    configuration_path.display(),
-                    temp_config.path().display(),
-                    e
-                ))?;
+            fs::copy(&configuration_path, temp_config.path())?;
 
             // Act: Execute the CLI command
             let mut cmd = Command::new(pkg_name!());
@@ -67,104 +106,13 @@ fn expand_cli_test(config_path: &LitStr, input_fn: &ItemFn) -> syn::Result<proc_
             
             cmd.assert().success();
 
-            // Create output helper
-            let #output_param = Output { temp: &temp };
+            // Create the output helper struct for the user's test
+            let #output_param = #output_struct_name { temp: &temp };
 
-            // Execute user's test body
+            // Execute the user's test body
             #body
 
             Ok(())
-        }
-
-        /// Helper struct providing assertion utilities for CLI test output
-        pub struct Output<'a> {
-            temp: &'a assert_fs::TempDir,
-        }
-
-        impl<'a> Output<'a> {
-            /// Assert on a file within the temporary directory
-            pub fn assert_file<P: AsRef<std::path::Path>>(&self, path: P) -> FileAssert {
-                FileAssert {
-                    path: self.temp.child(path),
-                }
-            }
-
-            /// Get the path to the temporary directory
-            pub fn path(&self) -> &std::path::Path {
-                self.temp.path()
-            }
-        }
-
-        /// Assertion builder for file contents
-        pub struct FileAssert {
-            path: assert_fs::NamedTempFile,
-        }
-
-        impl FileAssert {
-            /// Assert that the file contains the given text
-            pub fn contains(self, text: &str) -> Self {
-                let content = std::fs::read_to_string(self.path.path())
-                    .unwrap_or_else(|e| panic!(
-                        "Failed to read file {:?}: {}",
-                        self.path.path(),
-                        e
-                    ));
-                
-                assert!(
-                    content.contains(text),
-                    "Expected file {:?} to contain '{}'\nActual content:\n{}",
-                    self.path.path(),
-                    text,
-                    content
-                );
-                self
-            }
-
-            /// Assert that the file does not contain the given text
-            pub fn not_contains(self, text: &str) -> Self {
-                let content = std::fs::read_to_string(self.path.path())
-                    .unwrap_or_else(|e| panic!(
-                        "Failed to read file {:?}: {}",
-                        self.path.path(),
-                        e
-                    ));
-                
-                assert!(
-                    !content.contains(text),
-                    "Expected file {:?} to not contain '{}'\nActual content:\n{}",
-                    self.path.path(),
-                    text,
-                    content
-                );
-                self
-            }
-
-            /// Assert that the file exists
-            pub fn exists(self) -> Self {
-                self.path.assert(predicates::path::exists());
-                self
-            }
-
-            /// Assert that the file matches a predicate
-            pub fn matches<P: predicates::Predicate<[u8]>>(self, predicate: P) -> Self {
-                self.path.assert(predicate);
-                self
-            }
-
-            /// Get the actual file path
-            pub fn path(&self) -> &std::path::Path {
-                self.path.path()
-            }
-
-            /// Get the file content as a string
-            pub fn content(&self) -> String {
-                std::fs::read_to_string(self.path.path())
-                    .unwrap_or_else(|e| panic!(
-                        "Failed to read file {:?}: {}",
-                        self.path.path(),
-                        e
-                    ))
-            }
         }
     })
 }
