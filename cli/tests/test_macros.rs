@@ -11,6 +11,7 @@ use anyhow::{Error, Result};
 use assert_cmd::prelude::*;
 use predicates::prelude::*;
 use assert_fs::{prelude::*, TempDir};
+use assert_fs::fixture::PathChild;
 
 fn get_cli_command() -> Command {
     Command::new(pkg_name!())
@@ -21,6 +22,11 @@ macro_rules! test_happy_path {
     ($test_name:ident, $name:expr, $config_path:expr, $expect_snippet:expr, $assert_error: expr) => {
         #[test]
         fn $test_name() -> Result<(), Error> {
+use assert_cmd::prelude::*;
+use predicates::prelude::*;
+use assert_fs::{prelude::*, TempDir};
+use assert_fs::fixture::PathChild;
+
             //Arrange
             let temp = assert_fs::TempDir::new()?;
             let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -35,9 +41,9 @@ macro_rules! test_happy_path {
             
             //Assert
             //Assert files are generated
-            // temp.child($name)
-            //     .assert(predicate::path::exists());
-            //     .assert(predicate::path::is_dir());
+            temp.child($name)
+                .assert(predicate::path::exists())
+                .assert(predicate::path::is_dir());
             // temp.child(format!("{}/src/main.rs", $name))
             //     .assert(predicate::path::exists())
             //     .assert(predicate::path::is_file());      
