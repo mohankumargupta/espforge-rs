@@ -1,7 +1,7 @@
 pub mod compile_command;
 pub mod config;
 pub mod core;
-pub mod examples;
+pub mod templates;
 
 use espforge_macros::generate_example_enum;
 

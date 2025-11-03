@@ -3,16 +3,11 @@ use crate::Example;
 use askama::Template;
 
 #[derive(Clone, Debug, Template, Deserialize)]
-#[template(path = "examples/blink/main.rs.askama")]
-pub struct BlinkConfig {
-    pub blink_rate_ms: u64,
-}
+#[template(path = "templates/hello_world/main.rs.askama")]
+pub struct HelloWorldConfig;
 
-impl Example for BlinkConfig {
+impl Example for HelloWorldConfig {
     fn render(&self) -> Result<String, askama::Error> {
         Template::render(self)
     }
 }
-
-
-

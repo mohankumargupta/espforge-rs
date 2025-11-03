@@ -3,10 +3,10 @@ use crate::Example;
 use askama::Template;
 
 #[derive(Clone, Debug, Template, Deserialize)]
-#[template(path = "examples/hello_world/main.rs.askama")]
-pub struct HelloWorldConfig;
+#[template(path = "templates/bare/main.rs.askama")]
+pub struct BareConfig;
 
-impl Example for HelloWorldConfig {
+impl Example for BareConfig {
     fn render(&self) -> Result<String, askama::Error> {
         Template::render(self)
     }

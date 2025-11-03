@@ -7,7 +7,7 @@ use std::{
 
 pub fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
-    let examples_dir = Path::new("examples");
+    let examples_dir = Path::new("templates");
 
     // Collect subdirectories containing a config.rs
     let mut entries = Vec::new();
@@ -32,7 +32,7 @@ pub fn main() {
     for name in &entries {
         let alias = format!("{}Config", to_pascal_case(name));
         output.push_str(&format!(
-            "use crate::examples::{name}::config::{alias};\n"
+            "use crate::templates::{name}::config::{alias};\n"
         ));
     }
 

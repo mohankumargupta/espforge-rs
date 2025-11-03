@@ -7,3 +7,13 @@ edition = "2024"
 espforge_lib = { path = "../espforge" }
 clap = { version = "4.5.50", features = ["derive"] }
 
+[dev-dependencies]
+assert_cmd = "2.1"
+assert_fs = "1.1"
+predicates = "3.1"
+insta = "1.43"
+
+[[test]]
+name = "integration_tests"
+path = "tests/cli_tests.rs"
+
